@@ -22,7 +22,7 @@ int main()
 		
 	//center point ends here
 	
-    Player mainPlayer(window.getSize());
+    Player mainPlayer(window.getSize(),250,250);
 	
     while(window.isOpen()){
         sf::Event event;
