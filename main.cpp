@@ -22,6 +22,16 @@ int main()
 		
 	//center point ends here
 	
+	///Background
+		sf::Texture backgroundTexture;
+		if(backgroundTexture.loadFromFile("textures/background.jpg")){
+			cout << "backgrund loaded" << endl;
+		}
+		sf::Sprite background(backgroundTexture);
+		background.setPosition(0,0);
+		background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
+		//background.setScale(500/(0.10*background.getTextureRect().width),500/(0.10*background.getTextureRect().height));
+	//
     Player mainPlayer(window.getSize(),250,250);
 	
     while(window.isOpen()){
@@ -35,10 +45,10 @@ int main()
         }
 
         window.clear();
+		window.draw(background);
         mainPlayer.update(window,countFrames);
 		
 		//mainPlayer.weaponUpdate(window);
-		window.draw(shape);
         window.display();
 		countFrames++;
     }

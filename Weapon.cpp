@@ -27,7 +27,7 @@ void Weapon::shoot(Player& playerObject){
 void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint){
 	///for each bullet object move it 
 	for(int j = 0; j < _allPlayerBullets.size() ; j++){
-		_allPlayerBullets.at(j).radius -= 2;
+		_allPlayerBullets.at(j).radius -= 4;
 		_allPlayerBullets.at(j).updatePosition(refPoint);
 		window.draw(_allPlayerBullets.at(j).bullet);
 		if(_allPlayerBullets.at(j).radius < 0){
