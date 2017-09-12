@@ -3,12 +3,11 @@
 #include  <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <cmath>
-#include "Weapon.h"
 #include <iostream>
 
 using namespace std;
 
-class Player: public Weapon
+class Player
 {
 public:
 	//sf::Time timeP;

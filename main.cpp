@@ -38,10 +38,10 @@ int main()
         mainPlayer.update(window);
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && countFrames > 10){
 			cout << "shoot" << endl;
-			mainPlayer.shoot(mainPlayer);
+			//mainPlayer.shoot(mainPlayer);
 			countFrames = 0;
 		}
-		mainPlayer.weaponUpdate(window);
+		//mainPlayer.weaponUpdate(window);
 		window.draw(shape);
         window.display();
 		countFrames++;
