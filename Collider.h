@@ -9,6 +9,7 @@ class Collider
 public:
 	Collider(sf::Vector2f& parentPosition, sf::Vector2f& parentBounds);
 	bool collided(vector<sf::FloatRect>& gameObjects);
+	bool collided(sf::FloatRect& gameObjects);
 	void update(sf::Vector2f& parentPosition, sf::Vector2f& parentBounds);
 	~Collider();
 private:

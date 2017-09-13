@@ -24,3 +24,7 @@ bool  Collider::collided(vector<sf::FloatRect>& gameObjects){
 	}
 	return false;
 }
+
+bool  Collider::collided(sf::FloatRect& gameObjects){
+	return _2Dcollider.intersects(gameObjects);
+}
