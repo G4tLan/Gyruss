@@ -1,7 +1,7 @@
 #include "Collider.h"
 
-Collider::Collider(sf::Vector2f& parentPosition, sf::Vector2f& parentBounds):
-_2Dcollider{parentPosition,parentBounds}
+Collider::Collider(sf::FloatRect& parentBounds):
+_2Dcollider{parentBounds}, _tag{"noNAme"}
 {
 	
 }
@@ -11,20 +11,21 @@ Collider::~Collider()
 }
 
 
-void Collider::update(sf::Vector2f& parentPosition, sf::Vector2f& parentBounds){
-	sf::FloatRect tempRect{parentPosition,parentBounds};
-	_2Dcollider = tempRect;
+void Collider::update(sf::FloatRect parentBounds){
+	_2Dcollider = parentBounds;
 }
 
 
-bool  Collider::collided(vector<sf::FloatRect>& gameObjects){
+bool  Collider::collided(vector<Collider> gameObjects, int& index){
 	for(auto bounds : gameObjects){
-		if(_2Dcollider.intersects(bounds))
+		if(_2Dcollider.intersects(bounds.getCollider())){
+			index++;
 			return true;
+		}
 	}
 	return false;
 }
 
-bool  Collider::collided(sf::FloatRect& gameObjects){
-	return _2Dcollider.intersects(gameObjects);
+bool  Collider::collided(sf::FloatRect& gameObject){
+	return _2Dcollider.intersects(gameObject);
 }

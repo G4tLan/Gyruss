@@ -17,9 +17,9 @@ Weapon::~Weapon()
 {
 }
 
-void Weapon::shoot(Player& playerObject){
+void Weapon::shoot(Player& playerObject, string name){
 	//spawns bullet and stores it in array
-	Weapon::Bullet bulletSpawn(_bulletPrefab, playerObject.getPlayerPosition(), playerObject.getPlayerRotation(),playerObject.getRadius());
+	Weapon::Bullet bulletSpawn(_bulletPrefab, playerObject.getPlayerPosition(), playerObject.getPlayerRotation(),playerObject.getRadius(),name);
 		cout << "bullet pos " << bulletSpawn.bullet.getPosition().x << " " << bulletSpawn.bullet.getPosition().y << endl;
 	bulletSpawn.angle = playerObject.getAngle();
 	_allPlayerBullets.push_back(bulletSpawn);
@@ -37,3 +37,11 @@ void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint){
 	//system("pause");
 }
 
+
+vector<Collider> Weapon::getBulletCollider(){
+	vector<Collider> bulletColliders;
+	for(auto bullet:_allPlayerBullets){
+		bulletColliders.push_back(bullet.bulletCollider);
+	}
+	return bulletColliders;
+}

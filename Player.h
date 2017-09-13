@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include <cmath>
 #include "Weapon.h"
+#include "Collider.h"
 #include <iostream>
 
 
@@ -31,7 +32,7 @@ private:
 	Weapon _gun;
 	sf::Texture _playerTexture;
 	sf::Sprite _playerSprite;
-
+	Collider _playerCollider;
 };
 
 #endif // PLAYER_H

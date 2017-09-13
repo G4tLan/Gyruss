@@ -13,6 +13,8 @@ Player::Player(sf::Vector2u screenSize, float refX, float refY)
 								500/(scaleFactor*(float)_playerSprite.getTextureRect().height));
 		_playerSprite.setPosition(_refX + _radius*cos(_angle), _refY + _radius*sin(_angle));
 		_playerSprite.setRotation(_angle*180/PI - 90);
+		
+		_playerCollider.update(_playerSprite.getGlobalBounds());
 	}
 }
 
@@ -40,12 +42,17 @@ void Player::update(sf::RenderWindow& window, int& countFrames){
 	 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && countFrames > 5){
 			cout << "shoot" << endl;
-			_gun.shoot(*this);
+			_gun.shoot(*this,"PlayerBullet");
 			countFrames = 0;
 	}
 	sf::Vector2f ref(_refX,_refY) ;
 	_gun.weaponUpdate(window, ref);
-	
+	_playerCollider.update(_playerSprite.getGlobalBounds());
+	auto i = 0;
+	auto colliders = _gun.getBulletCollider();
+	if(_playerCollider.collided(colliders,i)){
+		cout << "Collided with " << colliders.at(i - 1).getTag() << endl;
+	}
 	timeP = clockP.restart();
 	window.draw(_playerSprite);
 }
