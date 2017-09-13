@@ -10,6 +10,7 @@ int main()
     sf::Clock clock;
     sf::Time time;
 	auto countFrames = 0;
+	bool playGame = false;
 	//Weapon weapon;
     /////////////////////////////
     sf::RenderWindow window(sf::VideoMode(500,500), "Try Game");
@@ -18,8 +19,6 @@ int main()
 		sf::CircleShape shape(5);
 		shape.setFillColor(sf::Color(100, 250, 50));
 		shape.setPosition(window.getSize().x/2,window.getSize().y/2);
-		
-		
 	//center point ends here
 	
 	///Background
@@ -29,9 +28,13 @@ int main()
 		}
 		sf::Sprite background(backgroundTexture);
 		background.setPosition(0,0);
-		background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
-		//background.setScale(500/(0.10*background.getTextureRect().width),500/(0.10*background.getTextureRect().height));
-	//
+		//background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
+	//Splash screen
+	sf::Texture spT1,spT2;
+	spT1.loadFromFile("textures/splash1.png");
+	spT2.loadFromFile("textures/splash2.png");
+	
+	////////////////////////////
     Player mainPlayer(window.getSize(),250,250);
 	
     while(window.isOpen()){
@@ -41,12 +44,31 @@ int main()
             case sf::Event::Closed:
                 window.close();
                 break;
+			case sf::Event::KeyPressed:
+				if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+					playGame = true;
             }
         }
-
         window.clear();
-		window.draw(background);
-        mainPlayer.update(window,countFrames);
+		
+		if(!playGame){
+			if(countFrames < 20){
+				background.setTexture(spT1);
+				background.setScale(500*3.8/( (float)background.getTextureRect().width),500*2.17/((float)background.getTextureRect().height));
+				window.draw(background);
+			} else {
+				background.setTexture(spT2);
+				background.setScale(500*3.8/( (float)background.getTextureRect().width),500*2.17/((float)background.getTextureRect().height));
+				window.draw(background);
+				if(countFrames > 40)
+					countFrames = 0;
+			}
+		} else {
+			background.setTexture(backgroundTexture);
+			background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
+			window.draw(background);
+			mainPlayer.update(window,countFrames);
+		}
 		
 		//mainPlayer.weaponUpdate(window);
         window.display();
