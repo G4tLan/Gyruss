@@ -1,1 +1,1 @@
-./Debug/main.cpp.o ./Debug/Player.cpp.o ./Debug/Weapon.cpp.o ./Debug/Collider.cpp.o   
+./Debug/main.cpp.o ./Debug/Player.cpp.o ./Debug/Weapon.cpp.o ./Debug/Collider.cpp.o ./Debug/GyrussEnemy.cpp.o   

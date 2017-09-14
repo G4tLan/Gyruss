@@ -42,11 +42,11 @@ void Player::update(sf::RenderWindow& window, int& countFrames){
 	 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && countFrames > 5){
 			cout << "shoot" << endl;
-			_gun.shoot(*this,"PlayerBullet");
+			_gun.playerShoot(*this,"PlayerBullet");
 			countFrames = 0;
 	}
 	sf::Vector2f ref(_refX,_refY) ;
-	_gun.weaponUpdate(window, ref);
+	_gun.weaponUpdate(window, ref, -1.0f);
 	_playerCollider.update(_playerSprite.getGlobalBounds());
 	auto i = 0;
 	auto colliders = _gun.getBulletCollider();

@@ -1,6 +1,8 @@
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "Player.h"
+#include "GyrussEnemy.h"
 #include <iostream>
 #include "Weapon.h"
 using namespace std;
@@ -34,6 +36,10 @@ int main()
 	spT1.loadFromFile("textures/splash1.png");
 	spT2.loadFromFile("textures/splash2.png");
 	
+	//////Enemy ??????????
+	
+	int enemyCount = 1 ; 
+	GyrussEnemy a[1] ; 
 	////////////////////////////
     Player mainPlayer(window.getSize(),250,250);
 	
@@ -77,3 +83,66 @@ int main()
     return 0;
 }
 
+
+/*
+//////////////////////////////////////////////////////////////enemy
+#include <SFML/Graphics.hpp>
+#include "GyrussEnemy.h"
+#include "Player.h"
+#include "iostream"
+
+
+using namespace std ; 
+using namespace sf ; 
+
+int main()
+{
+	
+	//////Create Player ///////
+	Player player(sf::Vector2<unsigned int> (500,500), 250,250);
+	
+	/////////////////////////
+	
+	srand(time(0)) ; 
+	const int width  = 500 , length = 500;
+    sf::RenderWindow window(sf::VideoMode(width, length ), "Gyruss");
+	window.setFramerateLimit(60);
+	
+	Texture EnemyTexture ; 
+	EnemyTexture.loadFromFile("textures/enemy.png") ;
+	Sprite sEnemy(EnemyTexture) ;  
+	
+	sEnemy.setOrigin(20,20) ; 
+	int enemyCount = 1 ; 
+	GyrussEnemy a[1] ; 
+	
+	
+	//int x = 0 , y = 0 ,dx = 0 , dy = 0 ; 
+	//float timer=0 , delay = 0.07 ;
+	Clock clock ; 
+   
+    while (window.isOpen())
+    {
+		float time = clock.getElapsedTime().asSeconds() ; 
+		clock.restart() ;
+		timer +=time ;		
+		Event event  ; 
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+		window.clear() ; 
+
+		 
+		for(int i = 0 ; i < enemyCount ; i++)
+		{
+			a[i].updateScreen(window) ; 
+		}
+
+        window.display();
+    }
+
+    return 0;
+}
+*/
