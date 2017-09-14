@@ -1,5 +1,6 @@
 #include "Weapon.h"
 #include "Player.h"
+#include "GyrussEnemy.h"
 #include <cstdlib>
 
 Weapon::Weapon()
@@ -17,30 +18,37 @@ Weapon::~Weapon()
 {
 }
 
-void Weapon::shoot(Player& playerObject, string name){
+void Weapon::playerShoot(Player& playerObject, string name){
 	//spawns bullet and stores it in array
 	Weapon::Bullet bulletSpawn(_bulletPrefab, playerObject.getPlayerPosition(), playerObject.getPlayerRotation(),playerObject.getRadius(),name);
 		cout << "bullet pos " << bulletSpawn.bullet.getPosition().x << " " << bulletSpawn.bullet.getPosition().y << endl;
 	bulletSpawn.angle = playerObject.getAngle();
-	_allPlayerBullets.push_back(bulletSpawn);
+	_allBullets.push_back(bulletSpawn);
 }
-void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint){
+void Weapon::enemyShoot(GyrussEnemy& enemyObject, string name){
+	//spawns bullet and stores it in array
+	Weapon::Bullet bulletSpawn(_bulletPrefab, enemyObject.getEnemyPosition(), enemyObject.getEnemyRotation(),enemyObject.getEnemyRadius(),name);
+		//cout << "bullet pos " << bulletSpawn.bullet.getPosition().x << " " << bulletSpawn.bullet.getPosition().y << endl;
+	bulletSpawn.angle = enemyObject.getEnemyAngle();
+	_allBullets.push_back(bulletSpawn);
+}
+
+void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint, float bulletDir){
 	///for each bullet object move it 
-	for(int j = 0; j < _allPlayerBullets.size() ; j++){
-		_allPlayerBullets.at(j).radius -= 4;
-		_allPlayerBullets.at(j).updatePosition(refPoint);
-		window.draw(_allPlayerBullets.at(j).bullet);
-		if(_allPlayerBullets.at(j).radius < 0){
-			_allPlayerBullets.pop_front();			
+	for(auto j = 0; j < _allBullets.size() ; j++){
+		_allBullets.at(j).radius += 4*bulletDir;
+		_allBullets.at(j).updatePosition(refPoint);
+		window.draw(_allBullets.at(j).bullet);
+		if(_allBullets.at(j).radius < 0){
+			_allBullets.pop_front();			
 		}
 	}
 	//system("pause");
 }
 
-
 vector<Collider> Weapon::getBulletCollider(){
 	vector<Collider> bulletColliders;
-	for(auto bullet:_allPlayerBullets){
+	for(auto bullet:_allBullets){
 		bulletColliders.push_back(bullet.bulletCollider);
 	}
 	return bulletColliders;

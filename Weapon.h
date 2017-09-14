@@ -9,12 +9,14 @@
 #include <iostream>
 using namespace std;
 class Player;
+class GyrussEnemy;
 class Weapon
 {
 public:
 	Weapon();
-	void shoot(Player& player, string name);
-	void weaponUpdate(sf::RenderWindow& window, sf::Vector2f);
+	void playerShoot(Player& player, string name);
+	void enemyShoot(GyrussEnemy& enemy, string name);
+	void weaponUpdate(sf::RenderWindow& window, sf::Vector2f, float bulletDir);
 	vector<Collider> getBulletCollider();
 	~Weapon();
 private:
@@ -42,7 +44,7 @@ private:
 			bulletCollider.update(bullet.getGlobalBounds());
 		}
 	};
-	deque<Weapon::Bullet> _allPlayerBullets;
+	deque<Weapon::Bullet> _allBullets;
 };
 
 #endif // WEAPON_H
