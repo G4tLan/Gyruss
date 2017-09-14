@@ -3,6 +3,7 @@
 #include  <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <cmath>
+#include <vector>
 #include "Weapon.h"
 #include "Collider.h"
 #include <iostream>
@@ -22,7 +23,8 @@ public:
 	float getPlayerRotation(){return _playerSprite.getRotation();}
 	float getAngle(){return _angle;}
 	float getRadius(){return _radius;}
-	void update(sf::RenderWindow& window,int& countFrames);
+	vector<Collider> getPlayerBullets(){return _gun.getBulletCollider();}
+	void update(sf::RenderWindow& window,int& countFrames, vector<Collider> enemyBullets);
 	~Player();
 private:
 	float _radius;

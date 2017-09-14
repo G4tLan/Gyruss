@@ -2,6 +2,8 @@
 
 GyrussEnemy::GyrussEnemy() 
 {
+		_isDead = false;
+		_radius = 0.1f;
 		if(EnemyTexture.loadFromFile("textures/enemy.png") ){
 			cout << "enemy sprite loaded" << endl;
 		}
@@ -15,15 +17,15 @@ GyrussEnemy::GyrussEnemy()
 		_dx = 4 - rand()%8 ; 
 		_dy = 4 - rand()%8 ; 
 	
-	
-	
 }
 
 void GyrussEnemy::move()
 {
 	srand(time(0)) ; 
-	_dx =+ ((2 - rand()%2) +  _dx) ; _x +=  _dx ;
-	_dy =+ ((2 - rand()%2)+ _dy ) ; _y +=      _dy ;
+	_dx =+ ((2 - rand()%2) +  _dx) ; 
+	_x +=  _dx ;
+	_dy =+ ((2 - rand()%2)+ _dy ) ;
+	_y +=      _dy ;
 	 int changeinX = (_xRefPoint - _x)  ,changeinY = (_yRefPoint -  _y) ;
 	
 		
@@ -32,36 +34,34 @@ void GyrussEnemy::move()
 		if((  r >= 100)) { _dx =- _dx ; _x +=  _dx  ; } ;
 	
 		if((  r >= 100)) { _dy =- _dy ; _y += _dy  ; } ;
-		EnemySprite.rotate(10) ;
+		//EnemySprite.rotate(10) ;
 }
 
 
 float tempTime = 0;
-GyrussEnemy::updateScreen( sf::RenderWindow &window)
+GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets)
 {	
 	float timeE = clockE.getElapsedTime().asSeconds ();
 	move() ; 
 	EnemySprite.setPosition(_x, _y ) ;
 	tempTime += timeE;
-	if(tempTime > 0.1){
-		
+	if(tempTime > 1){
+		cout << " enemy shooting" << endl;
 		_enemyWeapon.enemyShoot(*this, "enemyBullet");
 		tempTime = 0;
 	}
 	timeE = clockE.restart().asSeconds();
 	_enemyWeapon.weaponUpdate(window,sf::Vector2<float> (250,250), 1.0f);
 	_enemyCollider.update(EnemySprite.getGlobalBounds());
-	auto i = 0;
-	auto colliders = _enemyWeapon.getBulletCollider();
-	if(_enemyCollider.collided(colliders,i)){
-		cout << "Collided with " << colliders.at(i - 1).getTag() << endl;
+	int i = 0;
+	if(_enemyCollider.collided(playerBullets,i) && !playerBullets.empty()){
+		if(playerBullets.at(i - 1).getTag() == "playerBullet"){
+			_isDead = true;
+			
+		}
 	}
 	//std::cout <<"x: " << _x << "y: " << _y << std::endl ; ,
 	window.draw(EnemySprite) ;
-}
-
-GyrussEnemy::~GyrussEnemy()
-{
 }
 
 

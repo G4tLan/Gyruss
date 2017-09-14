@@ -23,7 +23,7 @@ Player::~Player()
 {
 }
 
-void Player::update(sf::RenderWindow& window, int& countFrames){
+void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider> enemyBullets){
 	sf::Time timeP = clockP.getElapsedTime();
 	
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
@@ -42,16 +42,16 @@ void Player::update(sf::RenderWindow& window, int& countFrames){
 	 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && countFrames > 5){
 			cout << "shoot" << endl;
-			_gun.playerShoot(*this,"PlayerBullet");
+			_gun.playerShoot(*this,"playerBullet");
 			countFrames = 0;
 	}
 	sf::Vector2f ref(_refX,_refY) ;
 	_gun.weaponUpdate(window, ref, -1.0f);
 	_playerCollider.update(_playerSprite.getGlobalBounds());
 	auto i = 0;
-	auto colliders = _gun.getBulletCollider();
-	if(_playerCollider.collided(colliders,i)){
-		cout << "Collided with " << colliders.at(i - 1).getTag() << endl;
+	//enemyBullets = _gun.getBulletCollider();
+	if(_playerCollider.collided(enemyBullets,i) && !enemyBullets.empty()){
+		cout << "Collided with " << enemyBullets.at(i - 1).getTag() << endl;
 	}
 	timeP = clockP.restart();
 	window.draw(_playerSprite);

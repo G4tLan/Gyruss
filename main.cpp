@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "GyrussEnemy.h"
 #include <iostream>
+#include <vector>
 #include "Weapon.h"
 using namespace std;
 
@@ -39,7 +40,8 @@ int main()
 	//////Enemy ??????????
 	
 	int enemyCount = 1 ; 
-	GyrussEnemy a[1] ; 
+	vector<GyrussEnemy> a(3) ; 
+	GyrussEnemy testEnemy;
 	////////////////////////////
     Player mainPlayer(window.getSize(),250,250);
 	
@@ -73,7 +75,23 @@ int main()
 			background.setTexture(backgroundTexture);
 			background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
 			window.draw(background);
-			mainPlayer.update(window,countFrames);
+			
+			for (int i = 0; i < a.size(); ++i){
+				mainPlayer.update(window,countFrames,a.at(i).getEnemyBullets());
+				a.at(i).updateScreen(window,mainPlayer.getPlayerBullets()) ;
+				if(a.at(i).isEnemyDead()){
+					cout << "enemy dead" << endl;
+					std::vector<GyrussEnemy>::iterator it = a.begin();
+					cout<< "lenght of vec before " << a.size() << endl;
+					a.at(i).~GyrussEnemy();
+					cout<< "lenght of vec after " << a.size() << endl;
+				}
+			}/*
+				mainPlayer.update(window,countFrames,testEnemy.getEnemyBullets());
+				testEnemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
+				if(testEnemy.isEnemyDead()){
+					cout << "enemy dead" << endl;
+				}*/
 		}
 		
 		//mainPlayer.weaponUpdate(window);
