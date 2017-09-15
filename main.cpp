@@ -1,15 +1,16 @@
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "Player.h"
 #include "GyrussEnemy.h"
 #include <iostream>
 #include <vector>
+#include <list>
 #include "Weapon.h"
 using namespace std;
 
 int main()
-{   //////////////////for checking frame rate
+{   
+	//////////////////for checking frame rate
     sf::Clock clock;
     sf::Time time;
 	auto countFrames = 0;
@@ -18,11 +19,6 @@ int main()
     /////////////////////////////
     sf::RenderWindow window(sf::VideoMode(500,500), "Try Game");
     window.setFramerateLimit(60);
-	//center point for debugging
-		sf::CircleShape shape(5);
-		shape.setFillColor(sf::Color(100, 250, 50));
-		shape.setPosition(window.getSize().x/2,window.getSize().y/2);
-	//center point ends here
 	
 	///Background
 		sf::Texture backgroundTexture;
@@ -39,8 +35,8 @@ int main()
 	
 	//////Enemy ??????????
 	
-	int enemyCount = 1 ; 
-	vector<GyrussEnemy> a(3) ; 
+	//list<GyrussEnemy> a(3); 
+	vector<GyrussEnemy> enemies(30);
 	GyrussEnemy testEnemy;
 	////////////////////////////
     Player mainPlayer(window.getSize(),250,250);
@@ -53,48 +49,55 @@ int main()
                 window.close();
                 break;
 			case sf::Event::KeyPressed:
-				if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+				if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
 					playGame = true;
+					background.setTexture(backgroundTexture);
+					background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
+				}
             }
         }
         window.clear();
 		
 		if(!playGame){
+			//Splash screen animation
 			if(countFrames < 20){
 				background.setTexture(spT1);
 				background.setScale(500*3.8/( (float)background.getTextureRect().width),500*2.17/((float)background.getTextureRect().height));
-				window.draw(background);
 			} else {
 				background.setTexture(spT2);
 				background.setScale(500*3.8/( (float)background.getTextureRect().width),500*2.17/((float)background.getTextureRect().height));
-				window.draw(background);
+			
 				if(countFrames > 40)
 					countFrames = 0;
 			}
-		} else {
-			background.setTexture(backgroundTexture);
-			background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
 			window.draw(background);
-			
-			for (int i = 0; i < a.size(); ++i){
-				mainPlayer.update(window,countFrames,a.at(i).getEnemyBullets());
-				a.at(i).updateScreen(window,mainPlayer.getPlayerBullets()) ;
-				if(a.at(i).isEnemyDead()){
-					cout << "enemy dead" << endl;
-					std::vector<GyrussEnemy>::iterator it = a.begin();
-					cout<< "lenght of vec before " << a.size() << endl;
-					a.at(i).~GyrussEnemy();
-					cout<< "lenght of vec after " << a.size() << endl;
+			//////
+		} else {
+			window.draw(background);
+			//mainPlayer.update(window,countFrames,testEnemy.getEnemyBullets());
+			//testEnemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
+			//if(testEnemy.isEnemyDead()){
+				//cout << "enemy dead" << endl;
+			//}
+			int i = 0;
+			for(auto it = enemies.begin(); (it != enemies.end()) && !enemies.empty(); it++){
+				auto &enemy = *it;
+				mainPlayer.update(window,countFrames,enemy.getEnemyBullets());
+				enemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
+				
+				if(enemy.isEnemyDead()){
+					cout << "enemy dead ,size = " << enemies.size() << endl;
+					enemies.erase(it);
+					cout << "erased , new size = " << enemies.size() << endl;
+					break;
 				}
-			}/*
+			}
+			if(enemies.empty()){
 				mainPlayer.update(window,countFrames,testEnemy.getEnemyBullets());
-				testEnemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
-				if(testEnemy.isEnemyDead()){
-					cout << "enemy dead" << endl;
-				}*/
+			}
+			
 		}
 		
-		//mainPlayer.weaponUpdate(window);
         window.display();
 		countFrames++;
     }

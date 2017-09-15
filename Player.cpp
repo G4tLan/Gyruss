@@ -21,6 +21,7 @@ Player::Player(sf::Vector2u screenSize, float refX, float refY)
 
 Player::~Player()
 {
+	cout << "player deleted" << endl;
 }
 
 void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider> enemyBullets){
@@ -30,18 +31,18 @@ void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider>
 		_angle -= PI*timeP.asMilliseconds()/600;
 		_playerSprite.setPosition(_refX + _radius*cos(_angle), _refY + _radius*sin(_angle));
 		_playerSprite.setRotation(_angle*180/PI - 90);
-		cout << _playerSprite.getPosition().x << " -,- " << _playerSprite.getPosition().y << endl;
+		//cout << _playerSprite.getPosition().x << " -,- " << _playerSprite.getPosition().y << endl;
 	}
 	
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
 		_angle += PI*timeP.asMilliseconds()/600;
 		_playerSprite.setPosition(_refX + _radius*cos(_angle), _refY + _radius*sin(_angle));
 		_playerSprite.setRotation(_angle*180/PI - 90);
-		cout << _playerSprite.getPosition().x << " -,- " << _playerSprite.getPosition().y << endl;
+		//cout << _playerSprite.getPosition().x << " -,- " << _playerSprite.getPosition().y << endl;
 	}
 	 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && countFrames > 5){
-			cout << "shoot" << endl;
+			//cout << "shoot" << endl;
 			_gun.playerShoot(*this,"playerBullet");
 			countFrames = 0;
 	}
@@ -51,8 +52,8 @@ void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider>
 	auto i = 0;
 	//enemyBullets = _gun.getBulletCollider();
 	if(_playerCollider.collided(enemyBullets,i) && !enemyBullets.empty()){
-		cout << "Collided with " << enemyBullets.at(i - 1).getTag() << endl;
+		//cout << "Collided with " << enemyBullets.at(i - 1).getTag() << endl;
 	}
-	timeP = clockP.restart();
 	window.draw(_playerSprite);
+	timeP = clockP.restart();
 }

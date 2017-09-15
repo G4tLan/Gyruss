@@ -20,23 +20,23 @@ public:
 	void enemySetup(sf::Texture texture,sf::Vector2f initialPosition, sf::Vector2f scale);
 	sf::Vector2f getEnemyPosition(){return EnemySprite.getPosition();}
 	float getEnemyRotation(){return EnemySprite.getRotation();}
-	float getEnemyRadius(){ cout << "enemy radius" << _radius << endl;return _radius;}
+	float getEnemyRadius(){ return _radius;}
 	float getEnemyAngle(){return _dTheta;}
 	vector<Collider> getEnemyBullets(){return _enemyWeapon.getBulletCollider();}
 	bool isEnemyDead(){return _isDead;}
 	void move() ; 
-	updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets);
+	void updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets);
 	int getX() {return _x ; }
 	int getY() {return _y ; }   
 	
 	
-	~GyrussEnemy(){delete this;}
+	~GyrussEnemy(){cout << "enemy deleted" << endl;}//delete this;}
 	
 private:
 		sf::Texture EnemyTexture ; 		
 		sf::Sprite  EnemySprite ; 
-		const int length =500 ; 
-		const int width = 500 ; 
+		int length; 
+		int width; 
 		float _radius;
 		float _dTheta;
 		int _Maxenemy  ; 

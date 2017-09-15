@@ -7,6 +7,8 @@ GyrussEnemy::GyrussEnemy()
 		if(EnemyTexture.loadFromFile("textures/enemy.png") ){
 			cout << "enemy sprite loaded" << endl;
 		}
+		length = 500; 
+		width = 500; 
 		EnemySprite.setTexture(EnemyTexture) ; 
 		int ts = 1 ;
 		_x= ((width-1)/2)*ts; 
@@ -39,14 +41,14 @@ void GyrussEnemy::move()
 
 
 float tempTime = 0;
-GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets)
+void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets)
 {	
 	float timeE = clockE.getElapsedTime().asSeconds ();
 	move() ; 
 	EnemySprite.setPosition(_x, _y ) ;
 	tempTime += timeE;
-	if(tempTime > 1){
-		cout << " enemy shooting" << endl;
+	if(tempTime > 3){
+		//cout << " enemy shooting" << endl;
 		_enemyWeapon.enemyShoot(*this, "enemyBullet");
 		tempTime = 0;
 	}

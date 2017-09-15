@@ -28,6 +28,7 @@ private:
 		float yPos;
 		float angle;
 		float radius;
+		float xScale,yScale;
 		Collider bulletCollider;
 		Bullet(sf::Sprite bulletSprite, sf::Vector2f position, float rotation, float dist, string name = "bullet"): 
 		bullet{bulletSprite}, angle{rotation}, radius{dist}
@@ -35,16 +36,20 @@ private:
 			bullet.setPosition(position);
 			bullet.setRotation(rotation);
 			bulletCollider.setTag(name);
+			xScale = bullet.getScale().x;
+			yScale = bullet.getScale().y;
 		}
 		void updatePosition(sf::Vector2f refPoint){
 			xPos = radius*cos(angle) + refPoint.x;
 			yPos = radius*sin(angle) + refPoint.y;
 			bullet.setPosition(xPos,yPos);
-			bullet.setScale(bullet.getScale().x/1.012f,bullet.getScale().y/1.025f);
+			bullet.setScale(xScale*radius/200, yScale*radius/200);
 			bulletCollider.update(bullet.getGlobalBounds());
+			//cout << bulletCollider.getTag() << " radius " << radius << " angle " << angle << endl;
 		}
 	};
 	deque<Weapon::Bullet> _allBullets;
+	vector<Collider> bulletColliders;
 };
 
 #endif // WEAPON_H
