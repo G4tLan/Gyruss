@@ -43,7 +43,7 @@ private:
 			xPos = radius*cos(angle) + refPoint.x;
 			yPos = radius*sin(angle) + refPoint.y;
 			bullet.setPosition(xPos,yPos);
-			bullet.setScale(xScale*radius/200, yScale*radius/200);
+			bullet.setScale(xScale*radius/400, yScale*radius/600);
 			bulletCollider.update(bullet.getGlobalBounds());
 			//cout << bulletCollider.getTag() << " radius " << radius << " angle " << angle << endl;
 		}

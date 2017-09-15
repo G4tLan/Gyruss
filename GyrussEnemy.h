@@ -40,7 +40,7 @@ private:
 		float _radius;
 		float _dTheta;
 		int _Maxenemy  ; 
-		int _x, _y,  _dx , _dy , _xRefPoint, _yRefPoint;
+		float _x, _y,  _dx , _dy , _xRefPoint, _yRefPoint;
 		bool _isDead;
 		EnemyType _enemyType;
 		Weapon _enemyWeapon;

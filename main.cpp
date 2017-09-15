@@ -36,7 +36,7 @@ int main()
 	//////Enemy ??????????
 	
 	//list<GyrussEnemy> a(3); 
-	vector<GyrussEnemy> enemies(30);
+	vector<GyrussEnemy> enemies(1);
 	GyrussEnemy testEnemy;
 	////////////////////////////
     Player mainPlayer(window.getSize(),250,250);
@@ -74,11 +74,6 @@ int main()
 			//////
 		} else {
 			window.draw(background);
-			//mainPlayer.update(window,countFrames,testEnemy.getEnemyBullets());
-			//testEnemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
-			//if(testEnemy.isEnemyDead()){
-				//cout << "enemy dead" << endl;
-			//}
 			int i = 0;
 			for(auto it = enemies.begin(); (it != enemies.end()) && !enemies.empty(); it++){
 				auto &enemy = *it;
@@ -86,9 +81,7 @@ int main()
 				enemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
 				
 				if(enemy.isEnemyDead()){
-					cout << "enemy dead ,size = " << enemies.size() << endl;
 					enemies.erase(it);
-					cout << "erased , new size = " << enemies.size() << endl;
 					break;
 				}
 			}

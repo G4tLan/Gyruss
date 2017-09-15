@@ -11,11 +11,11 @@ GyrussEnemy::GyrussEnemy()
 		width = 500; 
 		EnemySprite.setTexture(EnemyTexture) ; 
 		int ts = 1 ;
-		_x= ((width-1)/2)*ts; 
-		_y= ((length -1)/2)*ts ;
+		_x = 0; 
+		_y=  0;
 		
-		_xRefPoint = _x ;
-		_yRefPoint = _y ; 
+		_xRefPoint = ((width-1)/2)*ts;
+		_yRefPoint = ((length -1)/2)*ts; 
 		_dx = 4 - rand()%8 ; 
 		_dy = 4 - rand()%8 ; 
 	
@@ -23,20 +23,16 @@ GyrussEnemy::GyrussEnemy()
 
 void GyrussEnemy::move()
 {
-	srand(time(0)) ; 
-	_dx =+ ((2 - rand()%2) +  _dx) ; 
-	_x +=  _dx ;
-	_dy =+ ((2 - rand()%2)+ _dy ) ;
-	_y +=      _dy ;
-	 int changeinX = (_xRefPoint - _x)  ,changeinY = (_yRefPoint -  _y) ;
-	
-		
-	 float r =  sqrt( pow(changeinX , 2)  + pow(changeinY , 2)   )   ; 
-		
-		if((  r >= 100)) { _dx =- _dx ; _x +=  _dx  ; } ;
-	
-		if((  r >= 100)) { _dy =- _dy ; _y += _dy  ; } ;
-		//EnemySprite.rotate(10) ;
+	_radius = 100;
+	//srand(time(0)) ; 
+	//_dx =+ ((2 - rand()%2) +  _dx) ; 
+	_x =  _radius*cos(_dTheta) + _xRefPoint;
+	//_dy =+ ((2 - rand()%2)+ _dy ) ;
+	_y =  _radius*sin(_dTheta) +  _yRefPoint;
+	EnemySprite.setPosition(_x, _y ) ;
+	// int changeinX = (_xRefPoint - _x)  ,changeinY = (_yRefPoint -  _y) ;
+		EnemySprite.rotate(200) ;
+		_dTheta += 0.05f;
 }
 
 
@@ -44,10 +40,26 @@ float tempTime = 0;
 void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets)
 {	
 	float timeE = clockE.getElapsedTime().asSeconds ();
+	///this is were the enemy chooses the move
 	move() ; 
-	EnemySprite.setPosition(_x, _y ) ;
+	////////////////////
+	float xDiff = _x - _xRefPoint;
+	float yDiff = _yRefPoint - _y;
+	//_radius = sqrt(xDiff*xDiff + yDiff*yDiff);
+	//_dTheta = atan(yDiff/(xDiff + 0.001f));
+	/*
+	if(yDiff >= 0 && xDiff >= 0){ //first quadrant
+		_dTheta -= 4*atan(1)/2;
+	} else if (yDiff >= 0 && xDiff < 0){ //second quadrant
+		_dTheta -= 4*atan(1)/2;
+	} else if (yDiff < 0 && xDiff < 0){ //third quadrant
+		_dTheta += 4*atan(1)/2;
+	}else if (yDiff < 0 && xDiff >= 0){ //fourth quadrant
+		_dTheta += 4*atan(1)/2;
+	}
+	*/
 	tempTime += timeE;
-	if(tempTime > 3){
+	if(tempTime > 0.1){
 		//cout << " enemy shooting" << endl;
 		_enemyWeapon.enemyShoot(*this, "enemyBullet");
 		tempTime = 0;
