@@ -10,19 +10,8 @@
 using namespace std;
 class Player;
 class GyrussEnemy;
-class Weapon
-{
-public:
-	Weapon();
-	void playerShoot(Player& player, string name);
-	void enemyShoot(GyrussEnemy& enemy, string name);
-	void weaponUpdate(sf::RenderWindow& window, sf::Vector2f, float bulletDir);
-	vector<Collider> getBulletCollider();
-	~Weapon();
-private:
-	sf::Sprite _bulletPrefab;
-	sf::Texture _bulletTexture;
-	struct Bullet{
+
+struct Bullet{
 		sf::Sprite bullet;
 		float xPos;
 		float yPos;
@@ -47,8 +36,22 @@ private:
 			bulletCollider.update(bullet.getGlobalBounds());
 			//cout << bulletCollider.getTag() << " radius " << radius << " angle " << angle << endl;
 		}
-	};
-	deque<Weapon::Bullet> _allBullets;
+};
+
+class Weapon
+{
+public:
+	Weapon();
+	void playerShoot(Player& player, string name);
+	void enemyShoot(GyrussEnemy& enemy, string name);
+	void weaponUpdate(sf::RenderWindow& window, sf::Vector2f, float bulletDir);
+	vector<Collider> getBulletCollider();
+	~Weapon();
+private:
+	sf::Sprite _bulletPrefab;
+	sf::Texture _bulletTexture;
+	
+	deque<Bullet> _allBullets;
 	vector<Collider> bulletColliders;
 };
 
