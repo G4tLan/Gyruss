@@ -23,7 +23,7 @@ Collider::~Collider()
 
 void Collider::update(sf::FloatRect parentBounds){
 	_2Dcollider = parentBounds;
-	if(_tag == "playerBullet")
+	//if(_tag == "playerBullet")
 }
 
 
