@@ -2,6 +2,7 @@
 #define GYRUSSENEMY_H
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <deque>
 #include "Weapon.h"
 #include "Collider.h"
 #include <iostream>
@@ -25,7 +26,8 @@ public:
 	vector<Collider> getEnemyBullets(){return _enemyWeapon.getBulletCollider();}
 	bool isEnemyDead(){return _isDead;}
 	void move() ; 
-	void updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets);
+	void updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets); //remove later
+	void updateScreen( sf::RenderWindow &window, deque<Bullet>& playerBullets);
 	int getX() {return _x ; }
 	int getY() {return _y ; }   
 	

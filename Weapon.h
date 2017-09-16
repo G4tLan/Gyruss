@@ -46,7 +46,8 @@ public:
 	void playerShoot(Player& player, string name);
 	void enemyShoot(GyrussEnemy& enemy, string name);
 	void weaponUpdate(sf::RenderWindow& window, sf::Vector2f, float bulletDir);
-	vector<Collider> getBulletCollider();
+	vector<Collider> getBulletCollider(); //problematic
+	deque<Bullet>& getBullets(){return _allBullets;}
 	~Weapon();
 private:
 	sf::Sprite _bulletPrefab;

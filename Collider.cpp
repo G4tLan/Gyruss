@@ -23,7 +23,8 @@ Collider::~Collider()
 
 void Collider::update(sf::FloatRect parentBounds){
 	_2Dcollider = parentBounds;
-	//if(_tag == "playerBullet")
+	if(_tag == "playerBullet")
+	cout << " bounds " <<	parentBounds.left << " " << parentBounds.top << endl;
 }
 
 
@@ -46,9 +47,9 @@ bool  Collider::collided(vector<Collider>& gameObjects, int& index){
 	return false;
 }
 
-bool  Collider::collided(sf::FloatRect& gameObject){
+bool  Collider::collided(Collider& gameObject){
 	if(_isCollided){
 		return false;
 	}
-	return _2Dcollider.intersects(gameObject);
+	return _2Dcollider.intersects(gameObject.getCollider());
 }

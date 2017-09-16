@@ -12,8 +12,9 @@ public:
 	Collider();
 	Collider(sf::FloatRect& parentBounds);
 	bool collided(vector<Collider>& gameObjects, int& index);
-	bool collided(sf::FloatRect& gameObject);
+	bool collided(Collider& gameObject);
 	void setCollisionStatus(bool iscollided){_isCollided = iscollided;}
+	bool isCollided(){return _isCollided;}
 	sf::FloatRect getCollider(){return _2Dcollider;}
 	string getTag(){return _tag;}
 	void setTag(string name){_tag = name;}

@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include <cmath>
 #include <vector>
+#include <deque>
 #include <string>
 #include "Weapon.h"
 #include "Collider.h"
@@ -24,7 +25,8 @@ public:
 	float getPlayerRotation(){return _playerSprite.getRotation();}
 	float getAngle(){return _angle;}
 	float getRadius(){return _radius;}
-	vector<Collider> getPlayerBullets(){return _gun.getBulletCollider();}
+	vector<Collider> getPlayerBulletsColliders(){return _gun.getBulletCollider();}
+	deque<Bullet>& getPlayerBullets(){return _gun.getBullets();}
 	void update(sf::RenderWindow& window,int& countFrames, vector<Collider> enemyBullets);
 	~Player();
 private:

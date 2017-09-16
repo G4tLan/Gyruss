@@ -29,25 +29,6 @@ void GyrussEnemy::move()
 	_radius = 100;
 	//srand(time(0)) ; 
 	//_dx =+ ((2 - rand()%2) +  _dx) ; 
-	_x =  _radius*cos(_dTheta) + _xRefPoint;
-	//_dy =+ ((2 - rand()%2)+ _dy ) ;
-	_y =  _radius*sin(_dTheta) +  _yRefPoint;
-	EnemySprite.setPosition(_x, _y ) ;
-	// int changeinX = (_xRefPoint - _x)  ,changeinY = (_yRefPoint -  _y) ;
-		EnemySprite.rotate(200) ;
-		_dTheta += 0.05f;
-}
-
-
-float tempTime = 0;
-void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets)
-{	
-	float timeE = clockE.getElapsedTime().asSeconds ();
-	///this is were the enemy chooses the move
-	move() ; 
-	////////////////////
-	float xDiff = _x - _xRefPoint;
-	float yDiff = _yRefPoint - _y;
 	//_radius = sqrt(xDiff*xDiff + yDiff*yDiff);
 	//_dTheta = atan(yDiff/(xDiff + 0.001f));
 	/*
@@ -61,6 +42,25 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playe
 		_dTheta += 4*atan(1)/2;
 	}
 	*/
+	_x =  _radius*cos(_dTheta) + _xRefPoint;
+	//_dy =+ ((2 - rand()%2)+ _dy ) ;
+	_y =  _radius*sin(_dTheta) +  _yRefPoint;
+	EnemySprite.setPosition(_x, _y ) ;
+	// int changeinX = (_xRefPoint - _x)  ,changeinY = (_yRefPoint -  _y) ;
+		//EnemySprite.rotate(200) ;
+		_dTheta += 0.05f;
+}
+
+
+float tempTime = 0;
+void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets)
+{	
+	float timeE = clockE.getElapsedTime().asSeconds ();
+	///this is were the enemy chooses the move
+	move() ; 
+	////////////////////
+	float xDiff = _x - _xRefPoint;
+	float yDiff = _yRefPoint - _y;
 	tempTime += timeE;
 	if(tempTime > 0.1){
 		//cout << " enemy shooting" << endl;
@@ -80,6 +80,28 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playe
 	//std::cout <<"x: " << _x << "y: " << _y << std::endl ; ,
 	window.draw(EnemySprite) ;
 }
+
+
+void GyrussEnemy::updateScreen( sf::RenderWindow &window, deque<Bullet>& playerBullets){
+	_enemyCollider.update(EnemySprite.getGlobalBounds());
+	
+	move() ; 
+
+	auto i = 0;
+	for(auto& bullet:playerBullets){
+		if(_enemyCollider.collided(bullet.bulletCollider)){
+			if(bullet.bulletCollider.isCollided()){
+				continue;
+			}
+			bullet.bulletCollider.setCollisionStatus(true);
+			if(bullet.bulletCollider.getTag() == "playerBullet"){
+				_isDead = true;
+			}
+		}
+	}
+	window.draw(EnemySprite);
+}
+
 
 
 void GyrussEnemy::enemySetup(sf::Texture texture,sf::Vector2f initialPosition, sf::Vector2f scale){
