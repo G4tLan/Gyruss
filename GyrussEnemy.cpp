@@ -18,6 +18,9 @@ GyrussEnemy::GyrussEnemy()
 		_yRefPoint = ((length -1)/2)*ts; 
 		_dx = 4 - rand()%8 ; 
 		_dy = 4 - rand()%8 ; 
+		
+		_enemyCollider.update(EnemySprite.getGlobalBounds());
+		_enemyCollider.setTag("enemyCollider");
 	
 }
 
@@ -61,11 +64,11 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playe
 	tempTime += timeE;
 	if(tempTime > 0.1){
 		//cout << " enemy shooting" << endl;
-		_enemyWeapon.enemyShoot(*this, "enemyBullet");
+		//_enemyWeapon.enemyShoot(*this, "enemyBullet");
 		tempTime = 0;
 	}
 	timeE = clockE.restart().asSeconds();
-	_enemyWeapon.weaponUpdate(window,sf::Vector2<float> (250,250), 1.0f);
+	//_enemyWeapon.weaponUpdate(window,sf::Vector2<float> (250,250), 1.0f);
 	_enemyCollider.update(EnemySprite.getGlobalBounds());
 	int i = 0;
 	if(_enemyCollider.collided(playerBullets,i) && !playerBullets.empty()){

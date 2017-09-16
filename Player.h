@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include <cmath>
 #include <vector>
+#include <string>
 #include "Weapon.h"
 #include "Collider.h"
 #include <iostream>

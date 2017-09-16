@@ -15,13 +15,14 @@ Player::Player(sf::Vector2u screenSize, float refX, float refY)
 		_playerSprite.setRotation(_angle*180/PI - 90);
 		
 		_playerCollider.update(_playerSprite.getGlobalBounds());
+		_playerCollider.setTag("playerCollider");
 	}
 }
 
 
 Player::~Player()
 {
-	cout << "player deleted" << endl;
+	//cout << "player deleted" << endl;
 }
 
 void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider> enemyBullets){
@@ -41,7 +42,7 @@ void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider>
 		//cout << _playerSprite.getPosition().x << " -,- " << _playerSprite.getPosition().y << endl;
 	}
 	 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && countFrames > 5){
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && countFrames > 15){
 			//cout << "shoot" << endl;
 			_gun.playerShoot(*this,"playerBullet");
 			countFrames = 0;

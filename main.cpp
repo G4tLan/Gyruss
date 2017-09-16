@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include "Player.h"
-#include "GyrussEnemy.h"
 #include <iostream>
 #include <vector>
-#include <list>
 #include "Weapon.h"
+#include "Player.h"
+#include "GyrussEnemy.h"
+
 using namespace std;
 
 int main()
@@ -36,7 +36,7 @@ int main()
 	//////Enemy ??????????
 	
 	//list<GyrussEnemy> a(3); 
-	vector<GyrussEnemy> enemies(1);
+	vector<GyrussEnemy> enemies(5);
 	GyrussEnemy testEnemy;
 	////////////////////////////
     Player mainPlayer(window.getSize(),250,250);
@@ -73,16 +73,20 @@ int main()
 			window.draw(background);
 			//////
 		} else {
+			auto tempFrames = countFrames;
 			window.draw(background);
 			int i = 0;
 			for(auto it = enemies.begin(); (it != enemies.end()) && !enemies.empty(); it++){
 				auto &enemy = *it;
 				mainPlayer.update(window,countFrames,enemy.getEnemyBullets());
-				enemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
+				if(tempFrames%2 == 0){
+					enemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
+					tempFrames = 1;
+				}
 				
 				if(enemy.isEnemyDead()){
 					enemies.erase(it);
-					break;
+					//break;
 				}
 			}
 			if(enemies.empty()){

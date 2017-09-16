@@ -22,6 +22,7 @@ void Weapon::playerShoot(Player& playerObject, string name){
 	//spawns bullet and stores it in array
 	Bullet bulletSpawn(_bulletPrefab, playerObject.getPlayerPosition(), playerObject.getPlayerRotation(),playerObject.getRadius(),name);
 		//cout << "bullet pos " << bulletSpawn.bullet.getPosition().x << " " << bulletSpawn.bullet.getPosition().y << endl;
+		
 	bulletSpawn.angle = playerObject.getAngle();
 	_allBullets.push_back(bulletSpawn);
 }
@@ -40,6 +41,7 @@ void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint, float
 		_allBullets.at(j).updatePosition(refPoint);
 		window.draw(_allBullets.at(j).bullet);
 		if(_allBullets.at(j).radius < 0 || _allBullets.at(j).radius > 500){
+			//delete _allBullets.at(j).bulletCollider;
 			_allBullets.pop_front();			
 		}
 	}
@@ -47,6 +49,7 @@ void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint, float
 }
 
 vector<Collider> Weapon::getBulletCollider(){
+	vector<Collider> bulletColliders;
 	for(auto bullet:_allBullets){
 		bulletColliders.push_back(bullet.bulletCollider);
 	}

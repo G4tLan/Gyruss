@@ -36,6 +36,7 @@ struct Bullet{
 			bulletCollider.update(bullet.getGlobalBounds());
 			//cout << bulletCollider.getTag() << " radius " << radius << " angle " << angle << endl;
 		}
+		//~Bullet(){cout << bulletCollider.getTag() << " destroyed " << endl;
 };
 
 class Weapon
@@ -50,9 +51,7 @@ public:
 private:
 	sf::Sprite _bulletPrefab;
 	sf::Texture _bulletTexture;
-	
 	deque<Bullet> _allBullets;
-	vector<Collider> bulletColliders;
 };
 
 #endif // WEAPON_H

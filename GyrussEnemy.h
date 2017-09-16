@@ -30,7 +30,7 @@ public:
 	int getY() {return _y ; }   
 	
 	
-	~GyrussEnemy(){cout << "enemy deleted" << endl;}//delete this;}
+	~GyrussEnemy(){}
 	
 private:
 		sf::Texture EnemyTexture ; 		
