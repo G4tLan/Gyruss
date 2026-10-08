@@ -4,6 +4,7 @@
 Player::Player(sf::Vector2u screenSize, float refX, float refY)
 :_radius{200.0f}, _angle{PI/2}, _refX{refX}, _refY{refY}
 {
+	(void)screenSize;
 	if(!_playerTexture.loadFromFile("textures/player.png")){
 		cout << "player texture not found in dir textures" << endl;
 	} else {
@@ -53,7 +54,7 @@ void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider>
 	auto i = 0;
 	//enemyBullets = _gun.getBulletCollider();
 	if(_playerCollider.collided(enemyBullets,i) && !enemyBullets.empty()){
-		//cout << "Collided with " << enemyBullets.at(i - 1).getTag() << endl;
+		//cout << "Collided with " << enemyBullets.at(i).getTag() << endl;
 	}
 	window.draw(_playerSprite);
 	timeP = clockP.restart();

@@ -28,8 +28,8 @@ public:
 	void move() ; 
 	void updateScreen( sf::RenderWindow &window, vector<Collider> playerBullets); //remove later
 	void updateScreen( sf::RenderWindow &window, deque<Bullet>& playerBullets);
-	int getX() {return _x ; }
-	int getY() {return _y ; }   
+	float getX() {return _x ; }
+	float getY() {return _y ; }   
 	
 	
 	~GyrussEnemy(){}
@@ -37,14 +37,14 @@ public:
 private:
 		sf::Texture EnemyTexture ; 		
 		sf::Sprite  EnemySprite ; 
-		int length; 
-		int width; 
-		float _radius;
-		float _dTheta;
-		int _Maxenemy  ; 
-		float _x, _y,  _dx , _dy , _xRefPoint, _yRefPoint;
-		bool _isDead;
-		EnemyType _enemyType;
+		int length{500}; 
+		int width{500}; 
+		float _radius{100.0f};
+		float _dTheta{0.0f};
+		int _Maxenemy{0}  ; 
+		float _x{0}, _y{0},  _dx{0} , _dy{0} , _xRefPoint{250.0f}, _yRefPoint{250.0f};
+		bool _isDead{false};
+		EnemyType _enemyType{EnemyType::ships};
 		Weapon _enemyWeapon;
 		Collider _enemyCollider;
 };

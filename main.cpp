@@ -3,14 +3,31 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <cstdlib>
+#include <ctime>
 #include "Weapon.h"
 #include "Player.h"
 #include "GyrussEnemy.h"
 
 using namespace std;
 
+// Scale a sprite to fill the given target size. Does nothing when the sprite
+// has no texture yet (or the texture is empty) so we never divide by zero.
+static void fitSpriteTo(sf::Sprite& sprite, float targetWidth, float targetHeight){
+	const sf::Texture* texture = sprite.getTexture();
+	if(texture == nullptr){
+		return;
+	}
+	sf::Vector2u size = texture->getSize();
+	if(size.x == 0 || size.y == 0){
+		return;
+	}
+	sprite.setScale(targetWidth / (float)size.x, targetHeight / (float)size.y);
+}
+
 int main()
 {   
+	srand((unsigned)time(0));
 	//////////////////for checking frame rate
     sf::Clock clock;
     sf::Time time;
@@ -53,8 +70,11 @@ int main()
 				if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
 					playGame = true;
 					background.setTexture(backgroundTexture);
-					background.setScale(500/( (float)background.getTextureRect().width),500/((float)background.getTextureRect().height));
+					fitSpriteTo(background, 500, 500);
 				}
+				break;
+            default:
+                break;
             }
         }
         window.clear();
@@ -63,10 +83,10 @@ int main()
 			//Splash screen animation
 			if(countFrames < 20){
 				background.setTexture(spT1);
-				background.setScale(500*3.8/( (float)background.getTextureRect().width),500*2.17/((float)background.getTextureRect().height));
+				fitSpriteTo(background, 500*3.8f, 500*2.17f);
 			} else {
 				background.setTexture(spT2);
-				background.setScale(500*3.8/( (float)background.getTextureRect().width),500*2.17/((float)background.getTextureRect().height));
+				fitSpriteTo(background, 500*3.8f, 500*2.17f);
 			
 				if(countFrames > 40)
 					countFrames = 0;
@@ -74,28 +94,31 @@ int main()
 			window.draw(background);
 			//////
 		} else {
-			auto tempFrames = countFrames;
 			window.draw(background);
-			for(auto it = enemies.begin(); (it != enemies.end()) && !enemies.empty(); it++){
-				auto &enemy = *it;
-				mainPlayer.update(window,countFrames,enemy.getEnemyBullets());
-				//if(tempFrames%2 == 0){
-					//enemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
-					enemy.updateScreen(window,mainPlayer.getPlayerBullets()) ;
-					tempFrames = 1;
-				//}
-				
-				if(enemy.isEnemyDead()){
-					enemies.erase(it);
-					//enemies = temp;
-					cout <<" enemy dead" << endl;
-					break;
-				}
+
+			// The player is updated exactly once per frame, using every enemy
+			// bullet currently in the field. Updating it once per enemy made
+			// the player (and its bullets) advance several times a frame.
+			vector<Collider> enemyBullets;
+			for(auto& enemy : enemies){
+				vector<Collider> bullets = enemy.getEnemyBullets();
+				enemyBullets.insert(enemyBullets.end(), bullets.begin(), bullets.end());
 			}
 			if(enemies.empty()){
-				mainPlayer.update(window,countFrames,testEnemy.getEnemyBullets());
+				vector<Collider> bullets = testEnemy.getEnemyBullets();
+				enemyBullets.insert(enemyBullets.end(), bullets.begin(), bullets.end());
 			}
-			
+			mainPlayer.update(window,countFrames,enemyBullets);
+
+			for(auto it = enemies.begin(); it != enemies.end(); ){
+				it->updateScreen(window,mainPlayer.getPlayerBullets()) ;
+				if(it->isEnemyDead()){
+					it = enemies.erase(it);
+					cout <<" enemy dead" << endl;
+				} else {
+					++it;
+				}
+			}
 		}
 		
         window.display();

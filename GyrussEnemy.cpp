@@ -3,19 +3,20 @@
 GyrussEnemy::GyrussEnemy() 
 {
 		_isDead = false;
-		_radius = 0.1f;
+		_radius = 100.0f;
+		_dTheta = 0.0f;
+		_enemyType = EnemyType::ships;
 		if(EnemyTexture.loadFromFile("textures/enemy.png") ){
 			cout << "enemy sprite loaded" << endl;
 		}
 		length = 500; 
 		width = 500; 
 		EnemySprite.setTexture(EnemyTexture) ; 
-		int ts = 1 ;
 		_x = 0; 
 		_y=  0;
 		
-		_xRefPoint = ((width-1)/2)*ts;
-		_yRefPoint = ((length -1)/2)*ts; 
+		_xRefPoint = width/2;
+		_yRefPoint = length/2; 
 		_dx = 4 - rand()%8 ; 
 		_dy = 4 - rand()%8 ; 
 		
@@ -27,28 +28,10 @@ GyrussEnemy::GyrussEnemy()
 void GyrussEnemy::move()
 {
 	_radius = 100;
-	//srand(time(0)) ; 
-	//_dx =+ ((2 - rand()%2) +  _dx) ; 
-	//_radius = sqrt(xDiff*xDiff + yDiff*yDiff);
-	//_dTheta = atan(yDiff/(xDiff + 0.001f));
-	/*
-	if(yDiff >= 0 && xDiff >= 0){ //first quadrant
-		_dTheta -= 4*atan(1)/2;
-	} else if (yDiff >= 0 && xDiff < 0){ //second quadrant
-		_dTheta -= 4*atan(1)/2;
-	} else if (yDiff < 0 && xDiff < 0){ //third quadrant
-		_dTheta += 4*atan(1)/2;
-	}else if (yDiff < 0 && xDiff >= 0){ //fourth quadrant
-		_dTheta += 4*atan(1)/2;
-	}
-	*/
 	_x =  _radius*cos(_dTheta) + _xRefPoint;
-	//_dy =+ ((2 - rand()%2)+ _dy ) ;
 	_y =  _radius*sin(_dTheta) +  _yRefPoint;
 	EnemySprite.setPosition(_x, _y ) ;
-	// int changeinX = (_xRefPoint - _x)  ,changeinY = (_yRefPoint -  _y) ;
-		//EnemySprite.rotate(200) ;
-		_dTheta += 0.05f;
+	_dTheta += 0.05f;
 }
 
 
@@ -59,25 +42,18 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playe
 	///this is were the enemy chooses the move
 	move() ; 
 	////////////////////
-	float xDiff = _x - _xRefPoint;
-	float yDiff = _yRefPoint - _y;
 	tempTime += timeE;
 	if(tempTime > 0.1){
-		//cout << " enemy shooting" << endl;
-		//_enemyWeapon.enemyShoot(*this, "enemyBullet");
 		tempTime = 0;
 	}
 	timeE = clockE.restart().asSeconds();
-	//_enemyWeapon.weaponUpdate(window,sf::Vector2<float> (250,250), 1.0f);
 	_enemyCollider.update(EnemySprite.getGlobalBounds());
 	int i = 0;
 	if(_enemyCollider.collided(playerBullets,i) && !playerBullets.empty()){
-		if(playerBullets.at(i - 1).getTag() == "playerBullet"){
+		if(playerBullets.at(i).getTag() == "playerBullet"){
 			_isDead = true;
-			
 		}
 	}
-	//std::cout <<"x: " << _x << "y: " << _y << std::endl ; ,
 	window.draw(EnemySprite) ;
 }
 
@@ -87,7 +63,6 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, deque<Bullet>& playerB
 	
 	move() ; 
 
-	auto i = 0;
 	for(auto& bullet:playerBullets){
 		if(_enemyCollider.collided(bullet.bulletCollider)){
 			if(bullet.bulletCollider.isCollided()){
@@ -106,11 +81,29 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, deque<Bullet>& playerB
 
 void GyrussEnemy::enemySetup(sf::Texture texture,sf::Vector2f initialPosition, sf::Vector2f scale){
 	EnemyTexture = texture;
+	EnemySprite.setTexture(EnemyTexture);
 	EnemySprite.setPosition(initialPosition);
 	EnemySprite.setScale(scale);
+	_x = initialPosition.x;
+	_y = initialPosition.y;
+	_xRefPoint = initialPosition.x;
+	_yRefPoint = initialPosition.y;
 }
 
-GyrussEnemy::GyrussEnemy( sf::Vector2f initPos, EnemyType enemyType = EnemyType::ships){
+GyrussEnemy::GyrussEnemy( sf::Vector2f initPos, EnemyType enemyType){
+	_isDead = false;
+	_radius = 100.0f;
+	_dTheta = 0.0f;
+	_enemyType = enemyType;
+	length = 500;
+	width = 500;
+	_x = initPos.x;
+	_y = initPos.y;
+	_dx = 4 - rand()%8 ;
+	_dy = 4 - rand()%8 ;
+	_xRefPoint = initPos.x;
+	_yRefPoint = initPos.y;
+
 	sf::Texture temp ;
 	switch(enemyType){
 		case EnemyType::ships:
