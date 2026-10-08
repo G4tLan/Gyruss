@@ -30,10 +30,10 @@ public:
 	void update(sf::RenderWindow& window,int& countFrames, vector<Collider> enemyBullets);
 	~Player();
 private:
-	float _radius;
-	float _angle;
-	float _refX;
-	float _refY;
+	float _radius{200.0f};
+	float _angle{3.14159265358979323846f / 2.0f};
+	float _refX{250.0f};
+	float _refY{250.0f};
 	Weapon _gun;
 	sf::Texture _playerTexture;
 	sf::Sprite _playerSprite;

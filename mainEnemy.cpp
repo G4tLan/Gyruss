@@ -15,7 +15,7 @@ int main()
 	window.setFramerateLimit(60);
 	
 	Texture EnemyTexture ; 
-	EnemyTexture.loadFromFile("images/enemy.png") ;
+	EnemyTexture.loadFromFile("textures/enemy.png") ;
 	Sprite sEnemy(EnemyTexture) ;  
 	
 	sEnemy.setOrigin(20,20) ; 
@@ -23,8 +23,7 @@ int main()
 	GyrussEnemy a[10] ; 
 	
 	
-	int x = 0 , y = 0 ,dx = 0 , dy = 0 ; 
-	float timer=0 , delay = 0.07 ;
+	float timer=0 ;
 	Clock clock ; 
    
     while (window.isOpen())
@@ -39,29 +38,12 @@ int main()
                 window.close();
         }
 		
-		/*
-		for(int i= 0 ; i < enemyCount; i++) 
-			{
-				a[i].move() ; 		
-				cout <<"x: " << a[i].getX() << "y: " << a[i].getY() <<endl ; ; 
-			
-			}
-		*/
-		
 		window.clear() ; 
 
 		 
 		for(int i = 0 ; i < enemyCount ; i++)
 		{
-			//sEnemy.setPosition(a[i].getX() , a[i].getY() );
-			//window.draw(sEnemy) ;
-			
-			a[i].updateScreen(window) ; 
-			
-			//sEnemy.setScale(sEnemy.getScale().x /1.005 , sEnemy.getScale().y /1.005    );
-			
-	 
-	
+			a[i].updateScreen(window, vector<Collider>()) ; 
 		}
 
 

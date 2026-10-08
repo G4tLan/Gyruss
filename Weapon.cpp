@@ -34,18 +34,24 @@ void Weapon::enemyShoot(GyrussEnemy& enemyObject, string name){
 	_allBullets.push_back(bulletSpawn);
 }
 
-void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint, float bulletDir){
-	///for each bullet object move it 
-	for(auto j = 0; j < _allBullets.size() ; j++){
-		_allBullets.at(j).radius += 8*bulletDir;
-		_allBullets.at(j).updatePosition(refPoint);
-		window.draw(_allBullets.at(j).bullet);
-		if(_allBullets.at(j).radius < 0 || _allBullets.at(j).radius > 500){
-			//delete _allBullets.at(j).bulletCollider;
-			_allBullets.pop_front();			
+void Weapon::updateBullets(sf::Vector2f refPoint, float bulletDir){
+	///for each bullet object move it and drop the ones that left the play field
+	for(auto it = _allBullets.begin(); it != _allBullets.end(); ){
+		it->radius += 8*bulletDir;
+		it->updatePosition(refPoint);
+		if(it->radius < 0 || it->radius > 500){
+			it = _allBullets.erase(it);
+		} else {
+			++it;
 		}
 	}
-	//system("pause");
+}
+
+void Weapon::weaponUpdate(sf::RenderWindow& window, sf::Vector2f refPoint, float bulletDir){
+	updateBullets(refPoint, bulletDir);
+	for(auto& bullet : _allBullets){
+		window.draw(bullet.bullet);
+	}
 }
 
 vector<Collider> Weapon::getBulletCollider(){

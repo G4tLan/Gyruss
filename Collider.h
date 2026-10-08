@@ -10,7 +10,7 @@ class Collider
 {
 public:
 	Collider();
-	Collider(sf::FloatRect& parentBounds);
+	Collider(const sf::FloatRect& parentBounds);
 	bool collided(vector<Collider>& gameObjects, int& index);
 	bool collided(Collider& gameObject);
 	void setCollisionStatus(bool iscollided){_isCollided = iscollided;}
