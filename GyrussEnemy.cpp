@@ -27,11 +27,25 @@ GyrussEnemy::GyrussEnemy()
 
 void GyrussEnemy::move()
 {
-	_radius = 100;
 	_x =  _radius*cos(_dTheta) + _xRefPoint;
 	_y =  _radius*sin(_dTheta) +  _yRefPoint;
 	EnemySprite.setPosition(_x, _y ) ;
+	// Refresh the collider from the sprite we just moved so collisions are
+	// tested against this frame's position, not the previous one.
+	_enemyCollider.update(EnemySprite.getGlobalBounds());
 	_dTheta += 0.05f;
+}
+
+void GyrussEnemy::setOrbit(const sf::Vector2f& centre, float radius, float startAngle)
+{
+	_xRefPoint = centre.x;
+	_yRefPoint = centre.y;
+	_radius = radius;
+	_dTheta = startAngle;
+	_x = _radius*cos(_dTheta) + _xRefPoint;
+	_y = _radius*sin(_dTheta) + _yRefPoint;
+	EnemySprite.setPosition(_x, _y);
+	_enemyCollider.update(EnemySprite.getGlobalBounds());
 }
 
 
@@ -47,7 +61,6 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playe
 		tempTime = 0;
 	}
 	timeE = clockE.restart().asSeconds();
-	_enemyCollider.update(EnemySprite.getGlobalBounds());
 	int i = 0;
 	if(_enemyCollider.collided(playerBullets,i) && !playerBullets.empty()){
 		if(playerBullets.at(i).getTag() == "playerBullet"){
@@ -59,8 +72,6 @@ void GyrussEnemy::updateScreen( sf::RenderWindow &window, vector<Collider> playe
 
 
 void GyrussEnemy::updateScreen( sf::RenderWindow &window, deque<Bullet>& playerBullets){
-	_enemyCollider.update(EnemySprite.getGlobalBounds());
-	
 	move() ; 
 
 	for(auto& bullet:playerBullets){
@@ -129,4 +140,9 @@ GyrussEnemy::GyrussEnemy( sf::Vector2f initPos, EnemyType enemyType){
 		default:
 			break;
 	} 
+
+	// enemySetup() has now bound the texture and placed the sprite, so the
+	// collider can be tagged and sized like the default constructor does.
+	_enemyCollider.update(EnemySprite.getGlobalBounds());
+	_enemyCollider.setTag("enemyCollider");
 }
