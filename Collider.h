@@ -14,6 +14,10 @@ public:
 	bool collided(vector<Collider>& gameObjects, int& index);
 	bool collided(Collider& gameObject);
 	void setCollisionStatus(bool iscollided){_isCollided = iscollided;}
+	// Clears the one-shot collision latch. Bullets and enemies stay "collided"
+	// once they have hit something, but the player has to be able to register a
+	// new hit on every frame, so its collider is reset each update.
+	void resetCollisionStatus(){_isCollided = false;}
 	bool isCollided(){return _isCollided;}
 	sf::FloatRect getCollider(){return _2Dcollider;}
 	string getTag(){return _tag;}

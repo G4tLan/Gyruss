@@ -51,6 +51,9 @@ void Player::update(sf::RenderWindow& window, int& countFrames, vector<Collider>
 	sf::Vector2f ref(_refX,_refY) ;
 	_gun.weaponUpdate(window, ref, -1.0f);
 	_playerCollider.update(_playerSprite.getGlobalBounds());
+	// Clear the one-shot latch first: the player must be able to be hit again
+	// on a later frame, unlike a bullet or an enemy which collides only once.
+	_playerCollider.resetCollisionStatus();
 	auto i = 0;
 	//enemyBullets = _gun.getBulletCollider();
 	if(_playerCollider.collided(enemyBullets,i) && !enemyBullets.empty()){

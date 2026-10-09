@@ -23,6 +23,12 @@ public:
 	float getEnemyRotation(){return EnemySprite.getRotation();}
 	float getEnemyRadius(){ return _radius;}
 	float getEnemyAngle(){return _dTheta;}
+	sf::FloatRect getEnemyColliderBounds(){return _enemyCollider.getCollider();}
+	// Places the enemy on the circular path it orbits: `centre` is the orbit
+	// centre, `radius` the distance from it and `startAngle` (radians) the angle
+	// the enemy starts at. main() uses this to spread a wave of enemies around
+	// the ring instead of stacking them all on one point.
+	void setOrbit(const sf::Vector2f& centre, float radius, float startAngle);
 	vector<Collider> getEnemyBullets(){return _enemyWeapon.getBulletCollider();}
 	bool isEnemyDead(){return _isDead;}
 	void move() ; 
