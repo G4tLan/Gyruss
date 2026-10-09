@@ -100,3 +100,37 @@ TEST(vector_collision_skipped_when_already_collided) {
 	int index = -1;
 	CHECK(!a.collided(objects, index));
 }
+
+TEST(reset_collision_status_rearms_the_collider) {
+	Collider a;
+	Collider b;
+	a.update(sf::FloatRect(0.f, 0.f, 10.f, 10.f));
+	b.update(sf::FloatRect(5.f, 5.f, 10.f, 10.f));
+
+	CHECK(a.collided(b));
+	a.setCollisionStatus(true);
+	CHECK(a.isCollided());
+	CHECK(!a.collided(b));  // still latched
+
+	a.resetCollisionStatus();
+	CHECK(!a.isCollided());
+	CHECK(a.collided(b));  // can collide again after the reset
+}
+
+TEST(reset_collision_status_rearms_vector_collisions) {
+	Collider a;
+	a.update(sf::FloatRect(0.f, 0.f, 10.f, 10.f));
+
+	std::vector<Collider> objects(1);
+	objects.at(0).update(sf::FloatRect(5.f, 5.f, 10.f, 10.f));
+
+	int index = -1;
+	CHECK(a.collided(objects, index));
+	CHECK_EQ(index, 0);
+	CHECK(!a.collided(objects, index));  // latched after the first hit
+
+	a.resetCollisionStatus();
+	index = -1;
+	CHECK(a.collided(objects, index));
+	CHECK_EQ(index, 0);
+}

@@ -55,6 +55,14 @@ int main()
 	
 	//list<GyrussEnemy> a(3); 
 	vector<GyrussEnemy> enemies(5);
+	// Give every enemy its own starting angle. Constructing them all with the
+	// default orbit dropped all five sprites on the same point, so they moved
+	// as one blob and a single shot was the only target on screen.
+	const float twoPi = 6.28318530718f;
+	for(size_t i = 0; i < enemies.size(); ++i){
+		enemies.at(i).setOrbit(sf::Vector2f(250.0f, 250.0f), 100.0f,
+							   twoPi*(float)i/(float)enemies.size());
+	}
 	GyrussEnemy testEnemy;
 	////////////////////////////
     Player mainPlayer(window.getSize(),250,250);
