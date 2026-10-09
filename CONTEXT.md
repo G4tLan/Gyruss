@@ -1,138 +1,84 @@
-# Gyruss — project context
+# Project Context
 
-A small Gyruss-style arcade shooter written in C++17 on top of SFML. The player
-rides a ring around the centre of the screen and fires inward along its radius;
-enemies ride a smaller inner ring and orbit.
+## What this is
 
-This document describes how the code is put together, how to build and run it,
-and what is currently known to be broken. It is meant as an entry point for
-anyone picking the repository up.
-
-## Build, run, test
-
-Everything goes through the `Makefile` (see `Makefile`):
-
-| Target | Result |
-| --- | --- |
-| `make` / `make all` | builds game + demo into `Debug/` |
-| `make game` | `Debug/Gyruss` (from `main.cpp`) |
-| `make demo` | `Debug/GyrussEnemyDemo` (from `mainEnemy.cpp`) |
-| `make test` | builds and runs the test suite `Debug/run_tests` |
-| `make clean` | removes the build outputs |
-
-Requirements: a C++17 compiler and the SFML graphics/window/system libraries
-(`libsfml-dev` on Debian/Ubuntu). The tests create SFML textures, so on a
-headless machine the `test` target wraps the binary in `xvfb-run`
-(`apt-get install xvfb xauth`).
-
-**Run the game from the directory that contains `textures/`.** The game loads
-art via relative paths (`textures/player.png`, …) and only `Debug/textures/`
-exists in the checkout, so start it as:
-
-```
-cd Debug && ./Gyruss
-```
+A small **Gyruss**-style arcade game written in **C++17** using **SFML 2** (graphics + window +
+system). The player rides a circular orbit around the screen centre, rotates left/right around it,
+and fires bullets radially outward. Enemies orbit their own reference point and die when struck by
+a player bullet. The project also carries a headless unit-test suite for the core logic.
 
 ## Layout
 
-| File | Purpose |
+| Path | Purpose |
 | --- | --- |
-| `main.cpp` | the real game: splash screen, main loop, enemy wave |
-| `mainEnemy.cpp` | minimal demo that only shows enemies orbiting |
-| `Collider.*` | axis-aligned `sf::FloatRect` collision with a one-shot latch |
-| `Weapon.*` | owns the `Bullet` pool and moves/culls/draws it |
-| `Player.*` | player sprite, ring movement, firing, hit detection |
-| `GyrussEnemy.*` | enemy sprite, orbit movement, death on player bullet |
-| `tests/` | dependency-free test suite (`tests/test_framework.h`) |
+| `Collider.{h,cpp}` | Axis-aligned `sf::FloatRect` intersection helper (tag + one-shot collision flag). |
+| `Player.{h,cpp}` | Orbiting player sprite, input handling, shooting, collider. |
+| `Weapon.{h,cpp}` | `Bullet` struct + the weapon that spawns/updates/culls bullets. |
+| `GyrussEnemy.{h,cpp}` | Orbiting enemy, `EnemyType` enum, death-on-hit logic. |
+| `main.cpp` | The real game: splash screen, game loop, enemy management. |
+| `mainEnemy.cpp` | A minimal demo binary that just draws a field of enemies. |
+| `tests/` | Dependency-free unit tests (`test_framework.h` + `tests/main.cpp` runner). |
+| `Debug/textures/` | All image assets, **tracked in git** (backgrounds, `player.png`, `enemy.png`, `bullet.png`, splash art). |
+| `Gyruss2.txt` | Stray object-file list; not used by the build. |
 
-## Geometry
+The `Makefile` is the single build entry point. Sources are compiled directly (no object-file
+rules): the root `.cpp` files and `tests/*.cpp` are each linked into their own binary.
 
-The whole game is polar. A body is described by an *angle* (radians) and a
-*distance from the centre*; its screen position is
+## Build & test
 
+Requires an SFML development install (`libsfml-dev` on Debian/Ubuntu) and a working compiler.
+
+```sh
+make            # builds Debug/Gyruss and Debug/GyrussEnemyDemo
+make game       # the game only
+make demo       # the demo only
+make test       # builds + runs Debug/run_tests
+make clean
 ```
-pos = centre + radius * (cos(angle), sin(angle))
-```
 
-The playfield is 500x500, so the centre is `(250, 250)`.
+Flags: `-std=c++17 -Wall -Wextra -Wpedantic -O2`; SFML linked via
+`-lsfml-graphics -lsfml-window -lsfml-system`.
 
-* The player orbits at radius **200** (`Player::_radius`).
-* Enemies orbit at radius **100** (`GyrussEnemy::_radius`).
-* A bullet stores its own `radius`/`angle` and is advanced along its spoke by
-  `Weapon::updateBullets` (8 px per frame). It is culled once its radius leaves
-  `[0, 500]`.
-* The player's bullets travel **inward** (`weaponUpdate(..., -1.0f)`), the
-  enemies' bullets would travel outward (`+1.0f`).
+The tests create SFML textures, which need an X display. `make test` auto-detects a headless
+environment (`$DISPLAY` unset) and wraps the run in `xvfb-run -a` when available; otherwise run it
+from a real display. `tests/main.cpp` additionally holds one `sf::Texture` alive for the whole run,
+because SFML cannot reliably recreate an OpenGL context under Xvfb.
 
-## Classes
+Current state: **21 tests, 0 failed, 58 checks** (`make test`).
 
-### `Collider`
+## Architecture / data flow
 
-Wraps an `sf::FloatRect` plus a `_tag` and an `_isCollided` latch.
+- **`Collider`** wraps an `sf::FloatRect` and a string `tag`, plus an `_isCollided` latch.
+  `collided(vector<Collider>&, int& index)` returns `true` on the first intersection, reports the
+  hit index and flags both colliders so a bullet is only consumed once. A default-constructed
+  collider uses the off-screen rect `(600, 600, 2, 3)` and tag `"noNAme"`.
+- **`Bullet`** is polar: it stores an `angle` and increasing/decreasing `radius` around a reference
+  point, and `updatePosition(ref)` recomputes `xPos/yPos` and the collider. `Weapon::updateBullets`
+  steps radius by `8 * bulletDir` and culls anything outside `[0, 500]`. Bullets are tagged
+  (`"playerBullet"`, etc.) and the tag decides what they can kill.
+- **`Player`** holds an angle on a circle of radius `200` centred at `(refX, refY)` (the 250/250
+  window centre). Left/Right change the angle by `PI * elapsedMs / 600`; Space fires if
+  `countFrames > 15`. Its own bullets advance with `bulletDir = -1` (outward).
+- **`GyrussEnemy`** orbits its `(_xRefPoint, _yRefPoint)` at `radius 100`, advancing `_dTheta` by
+  `0.05` per `move()`. It has two `updateScreen` overloads (vector-of-`Collider` vs
+  `deque<Bullet>`); colliding with a `"playerBullet"` sets `_isDead`. The `EnemyType` enum
+  (`ships, satellites, asteroids, laser, generator`) selects a texture in the parameterised
+  constructor (most currently reuse `game_sprite.png`).
+- **`main.cpp` game loop**: shows an animated splash until Enter sets `playGame`; then, per frame,
+  it concatenates every enemy's bullets into one vector, updates the player **once** with all of
+  them, then updates each enemy with the player's bullets and erases dead ones. (`fitSpriteTo`
+  guards against empty textures before scaling.)
 
-* `update(bounds)` stores the parent's current bounds.
-* `collided(Collider&)` / `collided(vector<Collider>&, int& index)` test
-  intersection. Once a collider has hit something it sets its own latch and
-  returns `false` on later calls, so a bullet or an enemy collides only once.
-  The vector overload also reports the index of the object that was hit.
-* `resetCollisionStatus()` clears the latch; the player uses it every frame so
-  it can be hit more than once.
+## Conventions & gotchas
 
-### `Bullet` / `Weapon`
-
-`Bullet` is a `sf::Sprite` plus its polar coordinates and its own `Collider`.
-`Weapon` owns a `std::deque<Bullet>` and provides:
-
-* `playerShoot(Player&, tag)` / `enemyShoot(GyrussEnemy&, tag)` — spawn a bullet
-  at the owner's position/angle.
-* `updateBullets(ref, direction)` — advance every bullet, erase those that left
-  the field (erase by iterator, never `pop_front`).
-* `weaponUpdate(window, ref, direction)` — the above plus drawing.
-* `getBulletCollider()` — copies of the bullet colliders, for hit tests.
-
-### `Player`
-
-Placed on the ring by its constructor. `update()` rotates on Left/Right (using
-the frame delta from `clockP`) and fires on Space when the caller's `countFrames`
-has passed 15. It draws its bullets and itself, and tests its own collider
-against the enemy bullets passed in by `main()`.
-
-### `GyrussEnemy`
-
-Two constructors: the default one loads `textures/enemy.png` and orbits
-`(250, 250)` at radius 100; the parameterised one takes an orbit centre and an
-`EnemyType`. `move()` advances by 0.05 rad and keeps the collider in step with
-the sprite. `setOrbit(centre, radius, startAngle)` (re)places the enemy on its
-orbit. `updateScreen()` moves, checks the player's bullets, and draws.
-
-## Main loop (`main.cpp`)
-
-1. Show a two-frame splash until Return is pressed.
-2. Each frame: collect every enemy's bullets, update the player **once**, then
-   update each enemy and erase the dead ones.
-
-## Tests
-
-`make test` builds `tests/*.cpp` together with the game's core sources and runs
-them. The framework registers tests at static-init time; `CHECK*`/`REQUIRE*`
-macros live in `tests/test_framework.h`. `tests/main.cpp` keeps one texture
-alive for the whole run so SFML does not release its GL context between tests.
-
-## Known limitations / open issues
-
-* **Enemies never shoot.** `GyrussEnemy` owns a `_enemyWeapon` and exposes
-  `getEnemyBullets()`, and `Weapon::enemyShoot` exists, but nothing ever calls
-  it, so `getEnemyBullets()` always returns an empty vector and the player's
-  enemy-bullet collision path can never fire. The corresponding lines were
-  commented out in the original source.
-* **A hit has no consequence.** `Player::update` detects the collision but the
-  handler is empty; there is no life/score/game-over state.
-* **No win/lose handling.** Killing every enemy leaves an empty `enemies` vector
-  and the loop simply keeps running.
-* `Collider`/`Weapon` getters return copies, so collision flags written on the
-  copies (`getEnemyBullets()`, `getBulletCollider()`) do not propagate back to
-  the real bullets.
-* `GyrussEnemy` still carries dead members (`_dx`, `_dy`, `_Maxenemy`, the
-  file-scope `tempTime`).
-* Textures are required at runtime; a failed `loadFromFile` is only reported on
-  `std::cout` and the affected sprite is then drawn blank.
+- **Tab indentation**, tabs inside methods; `using namespace std;` is present in headers.
+  Classic `#ifndef`/`#define` header guards.
+- **Textures are resolved relative to the process working directory** (`textures/...`), and the
+  assets live in `Debug/textures/`. Run the game/demo/tests **from `Debug/`**, which is exactly
+  what `make test` does (`cd Debug && ./run_tests`). Running a binary from elsewhere silently fails
+  to load sprites.
+- `GyrussEnemy::updateScreen` uses a **file-scope `tempTime`** shared by all enemies; it is
+  effectively global state and will misbehave with many enemies.
+- Collider bounds come from `sprite.getGlobalBounds()`, so they track scale/rotation only after the
+  sprite has a texture; empty textures leave stale bounds.
+- Keep changes warning-clean: the project builds with `-Wall -Wextra -Wpedantic`.
